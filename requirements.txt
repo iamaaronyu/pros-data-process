@@ -1,0 +1,15 @@
+# Ray + Daft (optional: daft[ray] for distributed)
+daft[ray]>=0.2.0
+ray[default]>=2.0.0
+
+# OpenAI-compatible inference client
+openai>=1.0.0
+httpx>=0.25.0
+
+# Config & pipeline
+pyyaml>=6.0
+pydantic>=2.0.0
+
+# Tests
+pytest>=7.0.0
+pytest-asyncio>=0.21.0
