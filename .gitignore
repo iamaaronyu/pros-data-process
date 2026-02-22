@@ -49,3 +49,6 @@ htmlcov/
 output_qualified/
 *.log
 .DS_Store
+
+# 测试 fixtures 生成的图片（可由 make_dataset.py 或 pytest fixture 生成）
+tests/fixtures/images/
