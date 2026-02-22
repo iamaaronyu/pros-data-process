@@ -94,18 +94,23 @@ def call_quality_api(image: Any, caption: str, prompt: str, config: InferenceApi
         timeout=config.timeout,
         max_retries=config.max_retries,
     )
-    content = (resp.choices[0].message.content or "").strip().upper() if resp.choices else ""
-    score = 0.0
-    if "YES" in content or "是" in content or "1" in content:
-        score = 1.0
-    elif "NO" in content or "否" in content or "0" in content:
-        score = 0.0
-    else:
-        try:
-            score = float(content.replace(",", ".").split()[0])
-        except (ValueError, IndexError):
-            score = 0.0
-    return (score >= 0.8, min(max(score, 0.0), 1.0))
+    content = (resp.choices[0].message.content or "").strip() if resp.choices else ""
+    score = _parse_quality_score_from_content(content)
+    return (score >= 0.8, score)
+
+
+def _parse_quality_score_from_content(content: str) -> float:
+    """从 API 返回文本解析 0~1 分数，与 call_quality_api / _call_quality_api_httpx 共用。"""
+    content = (content or "").strip().upper()
+    if "YES" in content or "是" in content or content.strip() == "1":
+        return 1.0
+    if "NO" in content or "否" in content or content.strip() == "0":
+        return 0.0
+    try:
+        score = float(content.replace(",", ".").split()[0])
+        return min(max(score, 0.0), 1.0)
+    except (ValueError, IndexError):
+        return 0.0
 
 
 def _call_quality_api_httpx(image: Any, caption: str, prompt: str, config: InferenceApiConfig) -> tuple[bool, float]:
@@ -122,6 +127,6 @@ def _call_quality_api_httpx(image: Any, caption: str, prompt: str, config: Infer
         r.raise_for_status()
         data = r.json()
     choices = data.get("choices", [])
-    content = (choices[0].get("message", {}).get("content") or "").strip().upper() if choices else ""
-    score = 1.0 if "YES" in content or "是" in content else 0.0
+    content = (choices[0].get("message", {}).get("content") or "").strip() if choices else ""
+    score = _parse_quality_score_from_content(content)
     return (score >= 0.8, score)

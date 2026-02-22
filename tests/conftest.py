@@ -1,3 +1,12 @@
+"""测试配置：将项目根加入 sys.path，保证可 import ops / pipelines。"""
+import sys
+from pathlib import Path
+
+# 项目根目录（conftest 所在 tests/ 的上一级）
+_root = Path(__file__).resolve().parent.parent
+if str(_root) not in sys.path:
+    sys.path.insert(0, str(_root))
+
 import pytest
 
 
