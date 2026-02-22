@@ -89,7 +89,7 @@ p.run()
 ## 后续开发（新会话时如何接手）
 
 - **设计文档**：`docs/design-operators.md`（算子、注册、版本、Hooks）、`docs/design-image-caption-quality-pipeline.md`（图管线场景）。新需求先对照设计再改代码。
-- **当前状态**：算子 + Pipeline + 注册表 + 图管线（读图→Caption→Quality→Filter→Sink）已实现；测试 19+2 个，含 e2e；推理走统一 API（OpenAI 型），mock 测试。
+- **当前状态**：算子 + Pipeline + 注册表 + 图管线（读图→Caption→Quality→Filter→Sink）已实现；测试 21 个，含 e2e；推理走统一 API（OpenAI 型），在测试中通过 `patch("ops.image.caption.call_caption_api", ...)` 等 mock。详见 `NEXT.md`。
 - **提需求时**：尽量「一次一个功能点」，并指明文件或模块（如「在 `ops/image/caption.py` 里加重试」），便于快速定位、少耗 context。
 - **可选**：在项目根维护 `NEXT.md` 或 `CHANGELOG.md`，写「下一步要做 / 已做完」，新会话先读该文件再动手。
 
